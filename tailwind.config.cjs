@@ -31,10 +31,10 @@ module.exports = {
 
       // ── Font families — resolve to per-theme CSS vars ─────────────────────
       fontFamily: {
-        sans:    'var(--font-sans)',
-        heading: 'var(--font-heading)',
+        sans:    ['Inter', 'var(--font-sans)'],
+        heading: ['Instrument Serif', 'var(--font-heading)'],
         mono:    'var(--font-mono)',
-        serif:   ['Georgia', 'serif'],
+        serif:   ['Instrument Serif', 'serif'],
       },
 
       // ── Font sizes ─────────────────────────────────────────────────────────
@@ -54,6 +54,15 @@ module.exports = {
         ring:       'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        violet: {
+          500: '#8B5CF6',
+        },
+        cyan: {
+          500: '#06B6D4',
+        },
+        emerald: {
+          500: '#10B981',
+        },
         primary: {
           DEFAULT:    'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
@@ -119,11 +128,31 @@ module.exports = {
         'slide-up':      'slide-up 0.5s ease-out',
         'accordion-down':'accordion-down 0.2s ease-out',
         'accordion-up':  'accordion-up 0.2s ease-out',
+        'shimmer':       'shimmer 3s linear infinite',
+        'float':         'float 6s ease-in-out infinite',
+        'ticker':        'ticker 40s linear infinite',
+        'border-spin':   'border-spin 4s linear infinite',
       },
       keyframes: {
         'fade-in': {
           '0%':   { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        'shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0) scale(1)' },
+          '50%': { transform: 'translateY(-20px) scale(1.05)' },
+        },
+        'ticker': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'border-spin': {
+          'from': { transform: 'rotate(0deg)' },
+          'to': { transform: 'rotate(360deg)' },
         },
         'slide-up': {
           '0%':   { transform: 'translateY(10px)', opacity: '0' },

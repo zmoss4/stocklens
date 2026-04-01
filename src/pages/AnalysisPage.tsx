@@ -5,6 +5,7 @@ import { useBlinkAuth } from '@blinkdotnew/react';
 import { Page, PageHeader, PageTitle, PageDescription, PageBody, PageActions, Button, Card, CardHeader, CardTitle, CardContent, Badge, Skeleton, toast, Banner } from '@blinkdotnew/ui';
 import { TrendingUp, TrendingDown, Star, Share2, AlertTriangle, Activity, ChevronDown, ChevronUp, History, Info, ExternalLink } from 'lucide-react';
 import { blink } from '../blink/client';
+import { motion } from 'framer-motion';
 
 // Section Components
 import PriceSection from '../components/analysis/PriceSection';
@@ -62,20 +63,29 @@ export default function AnalysisPage() {
   });
 
   return (
-    <Page className="max-w-7xl mx-auto py-8 px-6 space-y-8">
-      <PageHeader className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border/50 pb-8">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <Badge variant="outline" className="text-xl font-bold px-4 py-1.5 border-primary/30 text-primary uppercase">
-              {ticker}
-            </Badge>
-            <Activity className="w-5 h-5 text-muted-foreground" />
+    <Page className="max-w-7xl mx-auto py-8 px-6 space-y-12 bg-[#030303]">
+      <PageHeader className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-12">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="shiny-border">
+              <Badge variant="outline" className="text-xl font-serif font-medium px-6 py-2 border-none text-white uppercase tracking-tight bg-black">
+                {ticker}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">Live Compute Active</span>
+            </div>
           </div>
-          <PageTitle className="text-4xl font-black mb-1">Interactive Research Report</PageTitle>
-          <PageDescription className="text-lg">
-            Real-time multi-source analysis engine. Pulling live data from FMP, Alpha Vantage, Polygon, and FRED.
+          <PageTitle className="text-5xl md:text-7xl font-serif tracking-tighter mb-2">Research Report</PageTitle>
+          <PageDescription className="text-lg text-neutral-400 font-light max-w-xl">
+            Real-time deterministic intelligence traces across global equity markets and macro indicators.
           </PageDescription>
-        </div>
+        </motion.div>
         <PageActions className="flex items-center gap-3">
           <Button 
             variant={watchlistItem ? "secondary" : "outline"} 
