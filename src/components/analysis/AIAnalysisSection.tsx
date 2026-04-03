@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardHeader, CardTitle, CardContent, Skeleton, Badge, Stat, StatGroup, Banner, Button, LoadingOverlay } from '@blinkdotnew/ui';
 import { Sparkles, TrendingUp, TrendingDown, Target, AlertTriangle, CheckCircle, Info, ChevronRight, Activity, Globe, ShieldAlert } from 'lucide-react';
+import { api } from '../../lib/api';
+import { blink } from '../../blink/client';
 
 export default function AIAnalysisSection({ ticker }: { ticker: string }) {
   const queryClient = useQueryClient();

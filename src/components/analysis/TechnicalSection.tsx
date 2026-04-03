@@ -1,17 +1,40 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardHeader, CardTitle, CardContent, Skeleton, Badge, Stat, StatGroup } from '@blinkdotnew/ui';
-import { ShieldAlert, TrendingUp, TrendingDown, Clock, Globe, Target, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { api } from '../../lib/api';
 
-export function TechnicalSection({ ticker }: { ticker: string }) {
+export default function TechnicalSection({ ticker }: { ticker: string }) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['technical', ticker],
     queryFn: () => api.getTechnical(ticker)
   });
 
   if (isLoading) return <TechnicalSkeleton />;
-  if (isError) return <TechnicalError />;
+  if (isError || !data) return <TechnicalError />;
+
+  // Parse RSI from Alpha Vantage response
+  const rsiData = data.rsi?.['Technical Analysis: RSI'];
+  const latestRsiDate = rsiData ? Object.keys(rsiData)[0] : null;
+  const rsiValue = latestRsiDate ? Number(rsiData[latestRsiDate]?.RSI || 0).toFixed(1) : 'N/A';
+
+  // Parse MACD
+  const macdData = data.macd?.['Technical Analysis: MACD'];
+  const latestMacdDate = macdData ? Object.keys(macdData)[0] : null;
+  const macdSignal = latestMacdDate ? (Number(macdData[latestMacdDate]?.MACD_Hist || 0) > 0 ? 'Bullish' : 'Bearish') : 'N/A';
+
+  // Parse SMA values
+  const sma50Data = data.sma50?.['Technical Analysis: SMA'];
+  const latestSma50Date = sma50Data ? Object.keys(sma50Data)[0] : null;
+  const sma50Value = latestSma50Date ? `$${Number(sma50Data[latestSma50Date]?.SMA || 0).toFixed(2)}` : 'N/A';
+
+  const sma200Data = data.sma200?.['Technical Analysis: SMA'];
+  const latestSma200Date = sma200Data ? Object.keys(sma200Data)[0] : null;
+  const sma200Value = latestSma200Date ? `$${Number(sma200Data[latestSma200Date]?.SMA || 0).toFixed(2)}` : 'N/A';
+
+  // Determine RSI label
+  const rsiNum = Number(rsiValue);
+  const rsiLabel = isNaN(rsiNum) ? '' : rsiNum > 70 ? ' (Overbought)' : rsiNum < 30 ? ' (Oversold)' : ' (Neutral)';
 
   return (
     <Card className="border-border/50 bg-card/50 backdrop-blur-md overflow-hidden relative group">
@@ -24,66 +47,24 @@ export function TechnicalSection({ ticker }: { ticker: string }) {
       </CardHeader>
       <CardContent className="space-y-4">
         <StatGroup className="grid-cols-2 gap-4">
-          <Stat label="RSI (14)" value="62.4 (Neutral)" />
-          <Stat label="MACD Signal" value="Bullish" />
-          <Stat label="50-Day MA" value="$182.4" />
-          <Stat label="200-Day MA" value="$165.8" />
+          <Stat label="RSI (14)" value={`${rsiValue}${rsiLabel}`} />
+          <Stat label="MACD Signal" value={macdSignal} />
+          <Stat label="50-Day MA" value={sma50Value} />
+          <Stat label="200-Day MA" value={sma200Value} />
         </StatGroup>
         
         <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20 flex items-center justify-between">
           <span className="text-xs font-bold text-primary">GOLDEN CROSS STATUS</span>
-          <Badge variant="secondary" className="font-black text-[10px]">ACTIVE</Badge>
+          <Badge variant="secondary" className="font-black text-[10px]">
+            {sma50Value !== 'N/A' && sma200Value !== 'N/A' && Number(sma50Value.replace('$', '')) > Number(sma200Value.replace('$', '')) ? 'ACTIVE' : 'INACTIVE'}
+          </Badge>
         </div>
 
-        <div className="text-[10px] text-muted-foreground text-right italic pt-4">
-          Last updated: {new Date(data.timestamp).toLocaleTimeString()}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-export function EarningsSection({ ticker }: { ticker: string }) {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['earnings', ticker],
-    queryFn: async () => {
-      const res = await fetch(`https://stocklens-analyzer-3d4wbgty.backend.blink.new/api/earnings/${ticker}`);
-      if (!res.ok) throw new Error('Failed to fetch');
-      return res.json();
-    }
-  });
-
-  if (isLoading) return <TechnicalSkeleton />;
-  if (isError) return <TechnicalError />;
-
-  return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-md overflow-hidden relative group">
-      <CardHeader className="pb-2">
-        <div className="flex items-center gap-2 mb-1">
-          <Target className="w-4 h-4 text-primary" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-primary/70">Earnings Intel</span>
-        </div>
-        <CardTitle className="text-xl font-black">Performance Beat</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <StatGroup className="grid-cols-2 gap-4">
-          <Stat label="Last EPS Beat" value="+12.4%" />
-          <Stat label="Revenue Beat" value="+3.2%" />
-          <Stat label="Next Earnings" value={data.calendar?.date || 'N/A'} />
-          <Stat label="Guidance" value="Positive" />
-        </StatGroup>
-        
-        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl">
-          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">Transcript Sentiment</div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">AI Confidence</span>
-            <span className="text-sm font-black text-primary">84% (Bullish)</span>
+        {data.timestamp && (
+          <div className="text-[10px] text-muted-foreground text-right italic pt-4">
+            Last updated: {new Date(data.timestamp).toLocaleTimeString()}
           </div>
-        </div>
-
-        <div className="text-[10px] text-muted-foreground text-right italic pt-4">
-          Last updated: {new Date(data.timestamp).toLocaleTimeString()}
-        </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -106,5 +87,3 @@ function TechnicalError() {
     </Card>
   );
 }
-
-export default TechnicalSection;

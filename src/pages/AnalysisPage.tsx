@@ -21,6 +21,7 @@ import {
   PeerSection 
 } from '../components/analysis/AdditionalSections';
 import AIAnalysisSection from '../components/analysis/AIAnalysisSection';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 export default function AnalysisPage() {
   const { ticker } = useParams({ from: '/analysis/$ticker' });
@@ -119,29 +120,29 @@ export default function AnalysisPage() {
 
       <PageBody className="space-y-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <PriceSection ticker={ticker} />
-          <FundamentalsSection ticker={ticker} />
+          <ErrorBoundary><PriceSection ticker={ticker} /></ErrorBoundary>
+          <ErrorBoundary><FundamentalsSection ticker={ticker} /></ErrorBoundary>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <RiskSection ticker={ticker} />
-          <TechnicalSection ticker={ticker} />
-          <UnusualSection ticker={ticker} />
+          <ErrorBoundary><RiskSection ticker={ticker} /></ErrorBoundary>
+          <ErrorBoundary><TechnicalSection ticker={ticker} /></ErrorBoundary>
+          <ErrorBoundary><UnusualSection ticker={ticker} /></ErrorBoundary>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <EarningsSection ticker={ticker} />
-          <InstitutionalSection ticker={ticker} />
+          <ErrorBoundary><EarningsSection ticker={ticker} /></ErrorBoundary>
+          <ErrorBoundary><InstitutionalSection ticker={ticker} /></ErrorBoundary>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <NewsSection ticker={ticker} />
-          <MacroSection ticker={ticker} />
+          <ErrorBoundary><NewsSection ticker={ticker} /></ErrorBoundary>
+          <ErrorBoundary><MacroSection ticker={ticker} /></ErrorBoundary>
         </div>
 
-        <PeerSection ticker={ticker} />
+        <ErrorBoundary><PeerSection ticker={ticker} /></ErrorBoundary>
 
-        <AIAnalysisSection ticker={ticker} />
+        <ErrorBoundary><AIAnalysisSection ticker={ticker} /></ErrorBoundary>
 
         <footer className="mt-24 text-center text-xs text-muted-foreground/40 border-t border-border/50 pt-8 pb-12">
           <p className="mb-2">StockLens is for educational and informational purposes only. Nothing on this platform constitutes financial advice.</p>

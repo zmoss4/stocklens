@@ -83,7 +83,7 @@ export default function FundamentalsSection({ ticker }: { ticker: string }) {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Gross Margin</span>
               <span className="text-sm font-black text-primary">
-                {((income[0]?.grossProfit / income[0]?.revenue) * 100).toFixed(1)}%
+                {income[0]?.revenue ? ((Number(income[0]?.grossProfit || 0) / Number(income[0].revenue)) * 100).toFixed(1) : '0.0'}%
               </span>
             </div>
           </div>

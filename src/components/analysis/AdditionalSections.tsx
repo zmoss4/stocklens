@@ -143,17 +143,21 @@ export function InstitutionalSection({ ticker }: { ticker: string }) {
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Recent Form 4 Filings</div>
-          {(data.insider || []).slice(0, 3).map((i: any, idx: number) => (
-            <div key={idx} className="flex items-center justify-between p-2 bg-muted/10 border border-border/20 rounded-lg">
-              <Persona name={i.reportingName} subtitle={i.transactionType} />
-              <div className="text-right">
-                <div className={`text-xs font-black ${i.transactionType.includes('Buy') ? 'text-green-500' : 'text-red-500'}`}>
-                  {i.transactionType.includes('Buy') ? '+' : '-'}{i.securitiesTransacted?.toLocaleString()}
+          {(data.insider || []).slice(0, 3).map((i: any, idx: number) => {
+            const txType = i.transactionType || '';
+            const isBuy = txType.toLowerCase().includes('buy') || txType.toLowerCase().includes('purchase');
+            return (
+              <div key={idx} className="flex items-center justify-between p-2 bg-muted/10 border border-border/20 rounded-lg">
+                <Persona name={i.reportingName || 'Unknown'} subtitle={txType || 'N/A'} />
+                <div className="text-right">
+                  <div className={`text-xs font-black ${isBuy ? 'text-green-500' : 'text-red-500'}`}>
+                    {isBuy ? '+' : '-'}{i.securitiesTransacted?.toLocaleString() || '0'}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">{i.transactionDate || 'N/A'}</div>
                 </div>
-                <div className="text-[10px] text-muted-foreground">{i.transactionDate}</div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <div className="text-[10px] text-muted-foreground text-right italic pt-4">
           Last updated: {new Date(data.timestamp).toLocaleTimeString()}
@@ -216,7 +220,7 @@ export function PeerSection({ ticker }: { ticker: string }) {
     { accessorKey: 'symbol', header: 'Symbol', cell: ({ row }: any) => <Badge variant="outline" className="font-bold">{row.original.symbol}</Badge> },
     { accessorKey: 'price', header: 'Price', cell: ({ row }: any) => `$${row.original.price?.toFixed(2)}` },
     { accessorKey: 'pe', header: 'P/E', cell: ({ row }: any) => row.original.pe?.toFixed(1) || 'N/A' },
-    { accessorKey: 'marketCap', header: 'Cap', cell: ({ row }: any) => `$${(row.original.marketCap / 1e9).toFixed(1)}B` },
+    { accessorKey: 'marketCap', header: 'Cap', cell: ({ row }: any) => row.original.marketCap ? `${(row.original.marketCap / 1e9).toFixed(1)}B` : 'N/A' },
     { accessorKey: 'changesPercentage', header: 'Chg %', cell: ({ row }: any) => (
       <span className={row.original.changesPercentage > 0 ? 'text-green-500 font-bold' : 'text-red-500 font-bold'}>
         {row.original.changesPercentage?.toFixed(2)}%
