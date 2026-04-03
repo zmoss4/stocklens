@@ -1,6 +1,6 @@
 import { blink } from '../blink/client';
 
-const BACKEND_URL = `https://stocklens-analyzer-3d4wbgty.backend.blink.new`;
+const BACKEND_URL = `https://3d4wbgty.backend.blink.new`;
 
 export const api = {
   getPriceValuation: async (ticker: string) => {
